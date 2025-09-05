@@ -1,0 +1,404 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import {
+  Home,
+  Menu,
+  X,
+  Stethoscope,
+  AlertCircle,
+  CheckCircle,
+  Moon,
+  Sun,
+  FileText,
+  LogIn,
+  UserPlus,
+  Users,
+  Phone,
+  ChevronRight,
+  Mail,
+  Clock,
+  Shield,
+} from "lucide-react"
+import { useTheme } from "next-themes"
+import Link from "next/link"
+
+export default function HomePage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [symptomText, setSymptomText] = useState("")
+  const [possibleConditions, setPossibleConditions] = useState<string[]>([])
+  const [selectedCondition, setSelectedCondition] = useState<string | null>(null)
+  const [showResults, setShowResults] = useState(false)
+  const { theme, setTheme } = useTheme()
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const slides = [
+    { title: "SymptoCare", subtitle: "Your symptoms, our care!" },
+    { title: "Smart Diagnosis", subtitle: "Get instant insights into your health symptoms" },
+    { title: "Expert Care", subtitle: "Connect with healthcare professionals when needed" },
+  ]
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [slides.length])
+
+  const analyzeSymptoms = () => {
+    if (!symptomText.trim()) return
+
+    // Mock analysis - in real app this would call an AI/medical API
+    const conditions = ["Diabetes", "Hypertension", "Asthma", "Common Cold", "Migraine"]
+
+    setPossibleConditions(conditions)
+    setShowResults(true)
+  }
+
+  const selectCondition = (condition: string) => {
+    setSelectedCondition(condition)
+    const conditionPath = condition.toLowerCase().replace(/\s+/g, "-")
+    window.location.href = `/questionnaire/${conditionPath}`
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      <div
+        className={`fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-50 transition-all duration-300 ${
+          isSidebarOpen ? "w-64" : "w-16"
+        }`}
+      >
+        <div className="p-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isSidebarOpen && <span className="ml-2">Menu</span>}
+          </Button>
+        </div>
+
+        <nav className="px-4 space-y-2">
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sidebar-primary hover:bg-sidebar-accent"
+            >
+              <Home className="h-4 w-4" />
+              {isSidebarOpen && <span className="ml-2">Home</span>}
+            </Button>
+          </Link>
+
+          <Link href="/fitgram">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <Users className="h-4 w-4" />
+              {isSidebarOpen && <span className="ml-2">FitGram</span>}
+            </Button>
+          </Link>
+
+          <Link href="/profile">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <FileText className="h-4 w-4" />
+              {isSidebarOpen && <span className="ml-2">My Details</span>}
+            </Button>
+          </Link>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            <Phone className="h-4 w-4" />
+            {isSidebarOpen && <span className="ml-2">Contact Us</span>}
+          </Button>
+        </nav>
+      </div>
+
+      {/* Main content area */}
+      <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-16"}`}>
+        {/* Top header */}
+        <header className="sticky top-0 z-40 bg-card border-b border-border">
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center">
+              <p className="text-2xl font-bold text-primary italic professional-heading">SymptoCare</p>
+            </div>
+
+            {/* Right: Theme Switch and Auth Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-foreground hover:bg-accent"
+              >
+                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+              <Link href="/auth/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-foreground border-border hover:bg-accent bg-transparent"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <section className="bg-gradient-to-br from-accent via-accent/50 to-background py-16">
+          <div className="container mx-auto px-4">
+            <Carousel className="w-full max-w-5xl mx-auto" opts={{ align: "start", loop: true }}>
+              <CarouselContent>
+                {slides.map((slide, index) => (
+                  <CarouselItem key={index}>
+                    <div className="text-center py-12 carousel-slide">
+                      <h1 className="text-7xl font-bold text-primary glow-text mb-6 professional-heading">
+                        {slide.title}
+                      </h1>
+                      <p className="text-2xl text-foreground/80 professional-body italic">"{slide.subtitle}"</p>
+                      <div className="mt-8 flex justify-center gap-2">
+                        {slides.map((_, i) => (
+                          <div
+                            key={i}
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              i === currentSlide ? "bg-primary scale-125" : "bg-primary/30"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
+            </Carousel>
+          </div>
+        </section>
+
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-6 max-w-4xl">
+          <Card className="mb-8 bg-card border-border fade-in-up">
+            <CardHeader>
+              <h2 className="text-2xl font-semibold text-card-foreground flex items-center gap-2 professional-heading">
+                <Stethoscope className="h-6 w-6 text-primary" />
+                Describe Your Symptoms
+              </h2>
+              <p className="text-muted-foreground professional-body">
+                Tell us what you're experiencing and we'll help identify possible conditions
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea
+                placeholder="Describe your symptoms in detail... (e.g., headache, fever, nausea, fatigue)"
+                value={symptomText}
+                onChange={(e) => setSymptomText(e.target.value)}
+                className="min-h-[120px] bg-input border-border text-foreground placeholder:text-muted-foreground professional-body"
+              />
+              <Button
+                onClick={analyzeSymptoms}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 professional-body"
+                disabled={!symptomText.trim()}
+              >
+                <AlertCircle className="h-4 w-4 mr-2" />
+                Analyze Symptoms
+              </Button>
+            </CardContent>
+          </Card>
+
+          {showResults && (
+            <Card className="mb-8 bg-card border-border fade-in-up">
+              <CardHeader>
+                <h3 className="text-xl font-semibold text-card-foreground professional-heading">Possible Conditions</h3>
+                <p className="text-muted-foreground professional-body">
+                  Based on your symptoms, here are 5 possible conditions. Click one to answer more detailed questions.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {possibleConditions.map((condition, index) => (
+                    <Card
+                      key={condition}
+                      className={`cursor-pointer transition-all duration-200 hover:bg-accent hover:shadow-md ${
+                        selectedCondition === condition ? "ring-2 ring-primary bg-primary/5" : ""
+                      }`}
+                      onClick={() => selectCondition(condition)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-card-foreground professional-heading">{condition}</h4>
+                              <p className="text-sm text-muted-foreground professional-body">
+                                Click to take detailed questionnaire (50 questions)
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-card border-border">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-3">
+                  <Stethoscope className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-card-foreground mb-2">AI-Powered Analysis</h3>
+                <p className="text-sm text-muted-foreground">
+                  Advanced algorithms analyze your symptoms for accurate results
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card border-border">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-3">
+                  <CheckCircle className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-card-foreground mb-2">Detailed Questions</h3>
+                <p className="text-sm text-muted-foreground">
+                  Answer specific questions to confirm potential conditions
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card border-border">
+              <CardContent className="p-6 text-center">
+                <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto mb-3">
+                  <AlertCircle className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="font-semibold text-card-foreground mb-2">Professional Guidance</h3>
+                <p className="text-sm text-muted-foreground">
+                  Get recommendations for next steps and when to see a doctor
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+
+        <footer className="bg-gradient-to-r from-card via-accent/20 to-card border-t border-border mt-12">
+          <div className="container mx-auto px-4 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="md:col-span-2">
+                <h3 className="text-2xl font-bold text-primary mb-4 professional-heading">SymptoCare</h3>
+                <p className="text-muted-foreground mb-4 professional-body">
+                  AI-powered healthcare assistance providing intelligent symptom analysis and professional medical
+                  guidance.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span>HIPAA Compliant & Secure</span>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-card-foreground mb-4 professional-heading flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-primary" />
+                  Contact Information
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <p className="text-muted-foreground flex items-center gap-2">
+                    <Mail className="h-3 w-3" />
+                    symptocare@gmail.com
+                  </p>
+                  <p className="text-muted-foreground flex items-center gap-2">
+                    <Phone className="h-3 w-3" />
+                    +91 720522140
+                  </p>
+                  <p className="text-muted-foreground flex items-center gap-2">
+                    <Clock className="h-3 w-3" />
+                    24/7 Support Available
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-card-foreground mb-4 professional-heading">Quick Links</h4>
+                <div className="space-y-2 text-sm">
+                  <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors block">
+                    About Us
+                  </Link>
+                  <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors block">
+                    Privacy Policy
+                  </Link>
+                  <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors block">
+                    Terms of Service
+                  </Link>
+                  <Link href="/help" className="text-muted-foreground hover:text-primary transition-colors block">
+                    Help Center
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border mt-8 pt-6 text-center">
+              <p className="text-sm text-muted-foreground professional-body">
+                © 2024 SymptoCare. All rights reserved by @hackodisha 5.0
+              </p>
+            </div>
+          </div>
+        </footer>
+
+        {/* Bottom Input Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4">
+          <div className="container mx-auto max-w-4xl">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <Textarea
+                  placeholder="Share your symptoms..."
+                  value={symptomText}
+                  onChange={(e) => setSymptomText(e.target.value)}
+                  className="min-h-[50px] resize-none bg-input border-border text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <Button
+                onClick={analyzeSymptoms}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={!symptomText.trim()}
+              >
+                <Stethoscope className="h-4 w-4 mr-2" />
+                Check
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom padding to account for fixed bottom section */}
+        <div className="h-24"></div>
+      </div>
+    </div>
+  )
+}
