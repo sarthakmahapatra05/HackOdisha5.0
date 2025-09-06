@@ -1,4 +1,7 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
-  "/auth/login/page": "app/auth/login/page.js"
+  "/fitgram/page": "app/fitgram/page.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/questionnaire/[condition]/page": "app/questionnaire/[condition]/page.js"
 }

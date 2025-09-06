@@ -1,4 +1,4 @@
-// File: C:\Users\sarth\Desktop\Symptocare\HackOdisha5.0\app\auth\login\page.tsx
+// File: C:\Users\charu\OneDrive\Desktop\symptocare\HackOdisha5.0\app\auth\login\page.tsx
 import * as entry from '../../../../../app/auth/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

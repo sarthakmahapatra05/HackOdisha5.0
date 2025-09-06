@@ -22,6 +22,7 @@ import {
   CheckCircle,
 } from "lucide-react"
 import Link from "next/link"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 interface Message {
   id: string
@@ -64,6 +65,8 @@ export default function ChatPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterSpecialization, setFilterSpecialization] = useState("all")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!)
 
   // Mock data
   useEffect(() => {
@@ -177,7 +180,7 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!newMessage.trim() || !selectedChat) return
 
     const message: Message = {
@@ -192,22 +195,42 @@ export default function ChatPage() {
     }
 
     setMessages((prev) => [...prev, message])
+    const userMessage = newMessage
     setNewMessage("")
 
-    // Simulate doctor response after 2 seconds
-    setTimeout(() => {
+    // Generate AI response
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+      const prompt = `You are a doctor named ${selectedChatRoom?.doctorName || "Dr. AI"} specializing in ${selectedChatRoom?.doctorSpecialization || "General Medicine"}. Respond to the patient's message as a helpful and professional doctor. Patient message: "${userMessage}"`
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      const text = response.text()
+
       const doctorResponse: Message = {
         id: (Date.now() + 1).toString(),
-        senderId: "1",
-        senderName: "Dr. Sarah Johnson",
+        senderId: selectedChatRoom?.doctorId || "1",
+        senderName: selectedChatRoom?.doctorName || "Dr. AI",
         senderType: "doctor",
-        content: "Thank you for the additional information. I'll review this and get back to you shortly.",
+        content: text,
         timestamp: new Date(),
         type: "text",
         status: "sent",
       }
       setMessages((prev) => [...prev, doctorResponse])
-    }, 2000)
+    } catch (error) {
+      console.error("Error generating AI response:", error)
+      const errorResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        senderId: selectedChatRoom?.doctorId || "1",
+        senderName: selectedChatRoom?.doctorName || "Dr. AI",
+        senderType: "doctor",
+        content: "I'm sorry, I'm having trouble responding right now. Please try again later.",
+        timestamp: new Date(),
+        type: "text",
+        status: "sent",
+      }
+      setMessages((prev) => [...prev, errorResponse])
+    }
   }
 
   const startNewChat = (doctorId: string) => {

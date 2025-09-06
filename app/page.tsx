@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Link from "next/link"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -42,6 +43,8 @@ export default function HomePage() {
     { title: "Expert Care", subtitle: "Connect with healthcare professionals when needed" },
   ]
 
+  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!)
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -49,14 +52,43 @@ export default function HomePage() {
     return () => clearInterval(timer)
   }, [slides.length])
 
-  const analyzeSymptoms = () => {
+  const analyzeSymptoms = async () => {
     if (!symptomText.trim()) return
 
-    // Mock analysis - in real app this would call an AI/medical API
-    const conditions = ["Diabetes", "Hypertension", "Asthma", "Common Cold", "Migraine"]
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+      const prompt = `You are a medical assistant. Based on the following symptoms: "${symptomText}", provide a list of 10 possible medical conditions with brief descriptions.`
+      const result = await model.generateContent(prompt)
+      const response = await result.response
+      const text = response.text()
 
-    setPossibleConditions(conditions)
-    setShowResults(true)
+      // Parse the response text into an array of conditions
+      const conditions = text
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .slice(0, 10)
+
+      setPossibleConditions(conditions)
+      setShowResults(true)
+    } catch (error) {
+      console.error("Error analyzing symptoms:", error)
+      // Fallback to mock data on error
+      const fallbackConditions = [
+        "Diabetes - A chronic condition that affects how your body processes blood sugar.",
+        "Hypertension - High blood pressure that can lead to serious health problems.",
+        "Asthma - A condition in which your airways narrow and swell, causing breathing difficulties.",
+        "Common Cold - A viral infection of your nose and throat.",
+        "Migraine - A headache that can cause severe throbbing pain or a pulsing sensation.",
+        "Anemia - A condition where you lack enough healthy red blood cells.",
+        "Allergy - An immune system reaction to a foreign substance.",
+        "Bronchitis - Inflammation of the lining of your bronchial tubes.",
+        "Flu - A contagious respiratory illness caused by influenza viruses.",
+        "Gastroenteritis - Inflammation of the stomach and intestines causing vomiting and diarrhea."
+      ]
+      setPossibleConditions(fallbackConditions)
+      setShowResults(true)
+    }
   }
 
   const selectCondition = (condition: string) => {
