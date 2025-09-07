@@ -27,7 +27,7 @@ A comprehensive healthcare platform built during **HackOdisha5.0** hackathon by 
 | **Ranjana Pradhan** | Frontend Developer & PPT Presentation | [@ranjanapradhan](https://github.com/RanjanaPradhan) |
 | **Adyasha Panda** | AI Integration & Backend Developer | [@adyashapanda](https://github.com/adyasha-panda-stack) |
 | **Sarthak Mahapatra** | Database Manager & Docker Integration | [@sarthakmahapatra](https://github.com/sarthakmahapatra05) |
-| **Aditi Pandey** | Team Management & Deployment | [@aditi](https://github.com/ADITI02-DEV) |
+| **Aditi Pandey** | Team Management & Deployment | [@aditipandey](https://github.com/ADITI02-DEV) |
 
 ## 🚀 Quick Start
 
