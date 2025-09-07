@@ -5,7 +5,6 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
-[![Vercel](https://symptocare-sable.vercel.app/)](https://vercel.com)
 
 A comprehensive healthcare platform built during **HackOdisha5.0** hackathon by **Team Alpha**. Symptocare empowers users with AI-driven symptom analysis, personalized health insights, and seamless doctor-patient connectivity.
 
