@@ -1,14 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { User, Stethoscope, Clock, Heart, Activity, Calendar, AlertCircle, CheckCircle, TrendingUp } from "lucide-react"
+import { User, Stethoscope, Clock, Heart, Activity, Calendar, AlertCircle, CheckCircle, TrendingUp, LogOut } from "lucide-react"
+import { signOut } from "@/lib/auth"
 
 export default function UserDashboard() {
+  const router = useRouter()
   const [symptomText, setSymptomText] = useState("")
   const [recentSymptoms] = useState([
     { id: 1, symptoms: "Headache, fatigue", date: "2024-01-15", status: "analyzed" },
@@ -22,6 +25,15 @@ export default function UserDashboard() {
     // In real app, this would call the symptom analysis API
   }
 
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      router.push("/auth/login")
+    } catch (error) {
+      console.error("Logout failed:", error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -31,10 +43,16 @@ export default function UserDashboard() {
             <h1 className="text-3xl font-bold text-foreground">User Dashboard</h1>
             <p className="text-muted-foreground">Track your health and manage symptoms</p>
           </div>
-          <Badge variant="secondary" className="bg-primary/10 text-primary">
-            <User className="h-4 w-4 mr-2" />
-            Patient
-          </Badge>
+          <div className="flex items-center gap-4">
+            <Badge variant="secondary" className="bg-primary/10 text-primary flex items-center">
+              <User className="h-4 w-4 mr-2" />
+              Patient
+            </Badge>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Quick Stats */}

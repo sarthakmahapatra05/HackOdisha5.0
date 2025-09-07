@@ -9,6 +9,14 @@ export async function signUp(email: string, password: string, userData: any) {
   if (error) throw error
 
   if (data.user) {
+    // Sign in the user to establish session for RLS
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (signInError) throw signInError
+
     // Create profile
     const { error: profileError } = await supabase
       .from('profiles')

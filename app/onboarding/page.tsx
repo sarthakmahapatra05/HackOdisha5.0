@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -18,6 +19,7 @@ import { getCurrentUser } from "@/lib/auth"
 type OnboardingStep = "welcome" | "profile" | "health" | "preferences" | "goals" | "notifications" | "complete"
 
 export default function OnboardingPage() {
+  const router = useRouter()
   const [step, setStep] = useState<OnboardingStep>("welcome")
   const [onboardingData, setOnboardingData] = useState({
     // Profile data
@@ -107,7 +109,7 @@ export default function OnboardingPage() {
 
       alert("Profile setup completed successfully!")
       // Redirect to appropriate dashboard based on user type
-      window.location.href = "/dashboard/user"
+      router.push("/dashboard/user")
     } catch (error: any) {
       alert("Failed to complete onboarding: " + error.message)
     } finally {

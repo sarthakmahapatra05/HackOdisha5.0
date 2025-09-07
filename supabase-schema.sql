@@ -110,6 +110,9 @@ ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
 
+CREATE POLICY "Users can insert own profile" ON profiles
+FOR INSERT WITH CHECK (auth.uid() = id);
+
 -- Health conditions: Public read
 CREATE POLICY "Public read health conditions" ON health_conditions FOR SELECT USING (true);
 

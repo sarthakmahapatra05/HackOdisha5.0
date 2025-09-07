@@ -43,7 +43,9 @@ export default function HomePage() {
     { title: "Expert Care", subtitle: "Connect with healthcare professionals when needed" },
   ]
 
-  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!)
+  const genAI = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_GEMINI_API_KEY
+    ? new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY)
+    : null
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -56,6 +58,25 @@ export default function HomePage() {
     if (!symptomText.trim()) return
 
     try {
+      if (!genAI) {
+        // Fallback to mock data if no API key
+        const fallbackConditions = [
+          "Diabetes - A chronic condition that affects how your body processes blood sugar.",
+          "Hypertension - High blood pressure that can lead to serious health problems.",
+          "Asthma - A condition in which your airways narrow and swell, causing breathing difficulties.",
+          "Common Cold - A viral infection of your nose and throat.",
+          "Migraine - A headache that can cause severe throbbing pain or a pulsing sensation.",
+          "Anemia - A condition where you lack enough healthy red blood cells.",
+          "Allergy - An immune system reaction to a foreign substance.",
+          "Bronchitis - Inflammation of the lining of your bronchial tubes.",
+          "Flu - A contagious respiratory illness caused by influenza viruses.",
+          "Gastroenteritis - Inflammation of the stomach and intestines causing vomiting and diarrhea."
+        ]
+        setPossibleConditions(fallbackConditions)
+        setShowResults(true)
+        return
+      }
+
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
       const prompt = `You are a medical assistant. Based on the following symptoms: "${symptomText}", provide a list of 10 possible medical conditions with brief descriptions.`
       const result = await model.generateContent(prompt)
@@ -98,7 +119,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex" suppressHydrationWarning>
       <div
         className={`fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-50 transition-all duration-300 ${
           isSidebarOpen ? "w-64" : "w-16"
