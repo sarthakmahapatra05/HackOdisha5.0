@@ -22,11 +22,11 @@ A comprehensive healthcare platform built during **HackOdisha5.0** hackathon by 
 
 | Name | Role | GitHub |
 |------|------|--------|
-| **Shreya Sahu** | Frontend Developer | [@shreyasahu](https://github.com/shreyasahu) |
-| **Ranjana Pradhan** | Frontend Developer & PPT Presentation | [@ranjanapradhan](https://github.com/ranjanapradhan) |
-| **Adyasha Panda** | AI Integration & Backend Developer | [@adyashapanda](https://github.com/adyashapanda) |
-| **Sarthak Mahapatra** | Database Manager & Docker Integration | [@sarthakmahapatra](https://github.com/sarthakmahapatra) |
-| **Aditi** | Team Management & Deployment | [@aditi](https://github.com/aditi) |
+| **Shreya Sahu** | Frontend Developer | [@shreyasahu](https://github.com/shreyaexo1) |
+| **Ranjana Pradhan** | Frontend Developer & PPT Presentation | [@ranjanapradhan](https://github.com/RanjanaPradhan) |
+| **Adyasha Panda** | AI Integration & Backend Developer | [@adyashapanda](https://github.com/adyasha-panda-stack) |
+| **Sarthak Mahapatra** | Database Manager & Docker Integration | [@sarthakmahapatra](https://github.com/sarthakmahapatra05) |
+| **Aditi** | Team Management & Deployment | [@aditi](https://github.com/ADITI02-DEV) |
 
 ## 🚀 Quick Start
 
