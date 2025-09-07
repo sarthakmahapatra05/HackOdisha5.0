@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { ChevronLeft } from "lucide-react"
+import { supabase } from "@/lib/supabase"
+import { getCurrentUser } from "@/lib/auth"
 
 interface Question {
   id: number
@@ -69,11 +71,34 @@ export default function QuestionnairePage({ params }: QuestionnaireProps) {
     )
   }
 
-  const handleSubmit = () => {
-    // For now, just log the answers. You can extend this to send to backend or further AI analysis.
-    console.log("User answers:", questions)
-    alert("Thank you for completing the questionnaire!")
-    router.push("/")
+  const handleSubmit = async () => {
+    try {
+      const user = await getCurrentUser()
+      if (!user) {
+        alert("You must be logged in to submit the questionnaire.")
+        return
+      }
+
+      // Save questionnaire responses to database
+      const { error } = await supabase.from("questionnaire_responses").insert({
+        user_id: user.id,
+        condition: condition.replace(/-/g, " "),
+        responses: questions.map(q => ({
+          question: q.text,
+          answer: q.answer
+        })),
+        submitted_at: new Date().toISOString(),
+      })
+
+      if (error) {
+        throw error
+      }
+
+      alert("Thank you for completing the questionnaire! Your responses have been saved.")
+      router.push("/")
+    } catch (error: any) {
+      alert("Failed to submit questionnaire: " + error.message)
+    }
   }
 
   return (

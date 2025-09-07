@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  app:
+    build: .
+    ports:
+      - "3000:3000"      # ...existing code...
+      services:
+        app:
+          # ...existing code...
+          environment:
+            - NEXT_PUBLIC_SUPABASE_URL=https://mnicqwxceoxwwuehzibw.supabase.co
+            - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaWNxd3hjZW94d3d1ZWh6aWJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzcyOTAsImV4cCI6MjA3MjcxMzI5MH0.rObphOWjeznqFaGiGerOxM9DMYohuWyOGUSkgQp6uGs
+      # ...existing code...
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - supabase
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm dev
+
+  # Supabase Local Development
+  supabase:
+    image: supabase/postgres:15.1.0.147
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+      - ./supabase-schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  supabase_data:

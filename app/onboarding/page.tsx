@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, ArrowRight, User, Heart, Bell, CheckCircle, Stethoscope, Target, Settings } from "lucide-react"
 import Link from "next/link"
+import { supabase } from "@/lib/supabase"
+import { getCurrentUser } from "@/lib/auth"
 
 type OnboardingStep = "welcome" | "profile" | "health" | "preferences" | "goals" | "notifications" | "complete"
 
@@ -68,12 +70,49 @@ export default function OnboardingPage() {
 
   const handleCompleteOnboarding = async () => {
     setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-      console.log(`[v0] Onboarding completed:`, onboardingData)
+    try {
+      const user = await getCurrentUser()
+      if (!user) {
+        alert("You must be logged in to complete onboarding.")
+        setIsLoading(false)
+        return
+      }
+
+      // Update profile in profiles table
+      const { error } = await supabase.from("profiles").update({
+        name: onboardingData.name,
+        age: parseInt(onboardingData.age) || null,
+        gender: onboardingData.gender,
+        location: onboardingData.location,
+        occupation: onboardingData.occupation,
+        medical_history: onboardingData.medicalHistory,
+        current_medications: onboardingData.currentMedications,
+        allergies: onboardingData.allergies,
+        emergency_contact: onboardingData.emergencyContact,
+        emergency_phone: onboardingData.emergencyPhone,
+        preferred_language: onboardingData.language,
+        preferred_doctor: onboardingData.preferredDoctor,
+        consultation_preference: onboardingData.consultationPreference,
+        health_goals: onboardingData.healthGoals,
+        symptom_tracking: onboardingData.symptomTracking,
+        email_notifications: onboardingData.emailNotifications,
+        sms_notifications: onboardingData.smsNotifications,
+        reminder_frequency: onboardingData.reminderFrequency,
+        onboarding_completed: true,
+      }).eq("id", user.id)
+
+      if (error) {
+        throw error
+      }
+
+      alert("Profile setup completed successfully!")
       // Redirect to appropriate dashboard based on user type
       window.location.href = "/dashboard/user"
-    }, 2000)
+    } catch (error: any) {
+      alert("Failed to complete onboarding: " + error.message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const updateData = (field: string, value: any) => {
@@ -81,12 +120,18 @@ export default function OnboardingPage() {
   }
 
   const toggleArrayItem = (field: string, item: string) => {
-    setOnboardingData((prev) => ({
-      ...prev,
-      [field]: prev[field as keyof typeof prev].includes(item)
-        ? (prev[field as keyof typeof prev] as string[]).filter((i) => i !== item)
-        : [...(prev[field as keyof typeof prev] as string[]), item],
-    }))
+    setOnboardingData((prev) => {
+      const currentValue = prev[field as keyof typeof prev];
+      if (Array.isArray(currentValue)) {
+        return {
+          ...prev,
+          [field]: currentValue.includes(item)
+            ? currentValue.filter((i) => i !== item)
+            : [...currentValue, item],
+        };
+      }
+      return prev;
+    });
   }
 
   const renderWelcomeStep = () => (

@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Upload, CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { supabase } from "@/lib/supabase"
+import { getCurrentUser } from "@/lib/auth"
 
 export default function DoctorApplicationPage() {
   const [formData, setFormData] = useState({
@@ -90,10 +92,42 @@ export default function DoctorApplicationPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsSubmitting(false)
-    alert("Application submitted successfully! You will receive a confirmation email shortly.")
+    try {
+      const user = await getCurrentUser()
+      if (!user) {
+        alert("You must be logged in to submit the application.")
+        setIsSubmitting(false)
+        return
+      }
+
+      // Prepare documents URLs or placeholders (assuming upload handled elsewhere)
+      const documents = {
+        medicalLicense: formData.documents.medicalLicense ? formData.documents.medicalLicense.name : null,
+        degreeCertificate: formData.documents.degreeCertificate ? formData.documents.degreeCertificate.name : null,
+        experienceCertificate: formData.documents.experienceCertificate ? formData.documents.experienceCertificate.name : null,
+        identityProof: formData.documents.identityProof ? formData.documents.identityProof.name : null,
+      }
+
+      // Insert application into doctor_applications table
+      const { error } = await supabase.from("doctor_applications").insert({
+        user_id: user.id,
+        license_number: formData.professional.licenseNumber,
+        specialization: formData.professional.specializations.join(", "),
+        experience_years: parseInt(formData.professional.yearsOfExperience) || 0,
+        documents: documents,
+        status: "pending",
+      })
+
+      if (error) {
+        throw error
+      }
+
+      alert("Application submitted successfully! You will receive a confirmation email shortly.")
+    } catch (error: any) {
+      alert("Failed to submit application: " + error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 4))
