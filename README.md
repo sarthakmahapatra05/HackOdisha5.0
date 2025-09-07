@@ -5,6 +5,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
+[![Vercel](https://symptocare-sable.vercel.app/)](https://vercel.com)
 
 A comprehensive healthcare platform built during **HackOdisha5.0** hackathon by **Team Alpha**. Symptocare empowers users with AI-driven symptom analysis, personalized health insights, and seamless doctor-patient connectivity.
 
@@ -26,7 +27,7 @@ A comprehensive healthcare platform built during **HackOdisha5.0** hackathon by 
 | **Ranjana Pradhan** | Frontend Developer & PPT Presentation | [@ranjanapradhan](https://github.com/RanjanaPradhan) |
 | **Adyasha Panda** | AI Integration & Backend Developer | [@adyashapanda](https://github.com/adyasha-panda-stack) |
 | **Sarthak Mahapatra** | Database Manager & Docker Integration | [@sarthakmahapatra](https://github.com/sarthakmahapatra05) |
-| **Aditi** | Team Management & Deployment | [@aditi](https://github.com/ADITI02-DEV) |
+| **Aditi Pandey** | Team Management & Deployment | [@aditi](https://github.com/ADITI02-DEV) |
 
 ## 🚀 Quick Start
 
